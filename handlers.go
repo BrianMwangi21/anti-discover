@@ -14,18 +14,18 @@ func indexViewHandler(c *fiber.Ctx) error {
 
 	// Define template functions.
 	metaTags := pages.MetaTags(
-		"gowebly, htmx example page, go with htmx",               // define meta keywords
-		"Welcome to example! You're here because it worked out.", // define meta description
+		"Anti-Discover",
+		"Spotify's discover weekly rogue twin",
 	)
 	bodyContent := pages.BodyContent(
-		"Welcome to example!",                // define h1 text
-		"You're here because it worked out.", // define p text
+		"Anti-Discover",
+		"You're here because you want something outside your radar. We got you!",
 	)
 
 	// Define template handler.
 	templateHandler := templ.Handler(
 		templates.Layout(
-			"Welcome to example!", // define title text
+			"Anti-Discover", // define title text
 			metaTags, bodyContent,
 		),
 	)
@@ -44,5 +44,5 @@ func showContentAPIHandler(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusBadRequest, "non-htmx request")
 	}
 
-	return c.SendString("<p>🎉 Yes, <strong>htmx</strong> is ready to use! (<code>GET /api/hello-world</code>)</p>")
+	return c.SendString("<p>🎉 Yes! We connected to Spotify!</p>")
 }

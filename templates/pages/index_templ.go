@@ -9,9 +9,7 @@ import "github.com/a-h/templ"
 import "context"
 import "io"
 import "bytes"
-import "strings"
 
-// MetaTags defines meta tags.
 func MetaTags(keywords, description string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -52,19 +50,7 @@ func MetaTags(keywords, description string) templ.Component {
 	})
 }
 
-// styledTextStyles defines CSS styles for component.
-func styledTextStyles() templ.CSSClass {
-	var templ_7745c5c3_CSSBuilder strings.Builder
-	templ_7745c5c3_CSSBuilder.WriteString(`color:#02BF87;`)
-	templ_7745c5c3_CSSID := templ.CSSID(`styledTextStyles`, templ_7745c5c3_CSSBuilder.String())
-	return templ.ComponentCSSClass{
-		ID:    templ_7745c5c3_CSSID,
-		Class: templ.SafeCSS(`.` + templ_7745c5c3_CSSID + `{` + templ_7745c5c3_CSSBuilder.String() + `}`),
-	}
-}
-
-// BodyContent defines HTML content.
-func BodyContent(h1, text string) templ.Component {
+func BodyContent(title, description string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -77,24 +63,33 @@ func BodyContent(h1, text string) templ.Component {
 			templ_7745c5c3_Var2 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"app\"><div><a href=\"https://gowebly.org\" target=\"_blank\"><img src=\"/static/images/gowebly.svg\" class=\"gowebly logo\" alt=\"Gowebly logo\"></a><h1>Go + Templ + htmx</h1>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"app\"><div><h1>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var3 = []any{styledTextStyles()}
-		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var3...)
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(title)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/index.templ`, Line: 10, Col: 14}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p class=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var3).String()))
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(description)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/index.templ`, Line: 12, Col: 17}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">You're using <strong>Templ</strong> package to generate HTML content!<br>Edit this styled text in the <code>./templates/pages/index.templ</code> file.</p><div class=\"content\"><button hx-get=\"/api/hello-world\" hx-target=\"#htmx-result\">Hello, World!</button><div id=\"htmx-result\"></div></div><p class=\"read-the-docs\">The Gowebly project is a next-generation CLI tool that makes it easy to create<br>amazing web applications with Go on the backend, using htmx & hyperscript<br>and the most popular CSS frameworks on the frontend.</p><p class=\"read-the-docs\"><a href=\"https://gowebly.org\" target=\"_blank\">Documentation</a> &sdot; <a href=\"https://github.com/gowebly/gowebly\" target=\"_blank\">GitHub</a></p></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><div class=\"content\"><button hx-get=\"/api/hello-world\" hx-target=\"#htmx-result\">Connect to Spotify</button><div id=\"htmx-result\"></div></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -105,16 +100,14 @@ func BodyContent(h1, text string) templ.Component {
 	})
 }
 
-// BodyScripts defines JavaScript code.
 func BodyScripts() templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_BodyScripts_3e71`,
-		Function: `function __templ_BodyScripts_3e71(){console.log(
-		"You're using Templ package to generate HTML content!",
-		"Edit this JavaScript code in the ` + "`" + `./templates/pages/index.templ` + "`" + ` file.",
+		Name: `__templ_BodyScripts_4bfe`,
+		Function: `function __templ_BodyScripts_4bfe(){console.log(
+		"Welcome to Anti-Discover",
 	);
 }`,
-		Call:       templ.SafeScript(`__templ_BodyScripts_3e71`),
-		CallInline: templ.SafeScriptInline(`__templ_BodyScripts_3e71`),
+		Call:       templ.SafeScript(`__templ_BodyScripts_4bfe`),
+		CallInline: templ.SafeScriptInline(`__templ_BodyScripts_4bfe`),
 	}
 }
