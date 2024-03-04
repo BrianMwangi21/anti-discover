@@ -5,7 +5,7 @@ templ MetaTags(keywords, description string) {
 	<meta name="description" content={ description }/>
 }
 
-templ BodyContent(title, description string) {
+templ BodyContent(title, description string, link templ.SafeURL) {
 	<div id="app">
 		<div>
 			<h1>{ title }</h1>
@@ -13,8 +13,7 @@ templ BodyContent(title, description string) {
 				{ description }
 			</p>
 			<div class="content">
-				<button hx-get="/api/hello-world" hx-target="#htmx-result">Connect to Spotify</button>
-				<div id="htmx-result"></div>
+				<a class="button" href={ link }>Connect to Spotify</a>
 			</div>
 		</div>
 	</div>

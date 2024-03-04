@@ -12,6 +12,7 @@ RUN go mod download
 
 # Copy your code into the container.
 COPY . .
+COPY .env .env
 
 # Set necessary environment variables and build your project.
 ENV CGO_ENABLED=0
