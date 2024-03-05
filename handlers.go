@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"net/url"
 
@@ -10,25 +11,16 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	gowebly "github.com/gowebly/helpers"
 	"github.com/zmb3/spotify/v2"
-	"github.com/zmb3/spotify/v2/auth"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 const redirectURI = "http://localhost:7000/anti"
-
-var (
-	scopes = [...]string{
-		spotifyauth.ScopePlaylistReadPrivate, spotifyauth.ScopePlaylistModifyPublic, spotifyauth.ScopePlaylistModifyPrivate,
-		spotifyauth.ScopePlaylistReadCollaborative, spotifyauth.ScopeUserReadEmail, spotifyauth.ScopeUserReadPrivate,
-		spotifyauth.ScopeUserReadCurrentlyPlaying, spotifyauth.ScopeUserReadRecentlyPlayed, spotifyauth.ScopeUserTopRead,
-	}
-	auth  = spotifyauth.New(spotifyauth.WithRedirectURL(redirectURI), spotifyauth.WithScopes(scopes[:]...))
-	ch    = make(chan *spotify.Client)
-	state = "anti-discover"
-)
+const state = "anti-discover"
 
 func getSpotifyLink() (templ.SafeURL, error) {
+	auth := getAuth()
+
 	spotifyID := gowebly.Getenv("SPOTIFY_ID", "")
 	if spotifyID == "" {
 		return "", errors.New("SPOTIFY_ID not set")
@@ -56,10 +48,7 @@ func indexViewHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	metaTags := pages.MetaTags(
-		"Anti-Discover",
-		"Spotify's discover weekly rogue twin",
-	)
+	metaTags := getMetaTags()
 	bodyContent := pages.BodyContent(
 		"Anti-Discover",
 		"You're here because you want something outside your radar. We got you!",
@@ -73,12 +62,45 @@ func indexViewHandler(c *fiber.Ctx) error {
 	return adaptor.HTTPHandler(templateHandler)(c)
 }
 
-func connectToSpotifyHandler(c *fiber.Ctx) error {
-	if c.Get("HX-Request") == "" || c.Get("HX-Request") != "true" {
-		return fiber.NewError(fiber.StatusBadRequest, "non-htmx request")
+func antiHandler(c *fiber.Ctx) error {
+	auth := getAuth()
+
+	request, err := convertRequest(&c.Context().Request)
+	if err != nil {
+		return err
 	}
 
-	url := auth.AuthURL(state)
-	return c.SendString("<p>🎉 To connect to Spotify, follow the following link: " + url + "</p>")
-	// return c.SendString("<p>🎉 Yes! We connected to Spotify!</p>")
+	token, err := auth.Token(request.Context(), state, request)
+
+	if err != nil {
+		return err
+	}
+
+	if st := request.FormValue("state"); st != state {
+		return errors.New("State mismatch")
+	}
+
+	client := spotify.New(auth.Client(c.Context(), token))
+	user, err := client.CurrentUser(context.Background())
+	if err != nil {
+		return err
+	}
+
+	metaTags := getMetaTags()
+	antiContent := pages.AntiContent(user)
+
+	templateHandler := templ.Handler(
+		templates.Layout("Anti-Discover", metaTags, antiContent),
+	)
+
+	return adaptor.HTTPHandler(templateHandler)(c)
 }
+
+// func connectToSpotifyHandler(c *fiber.Ctx) error {
+// 	if c.Get("HX-Request") == "" || c.Get("HX-Request") != "true" {
+// 		return fiber.NewError(fiber.StatusBadRequest, "non-htmx request")
+// 	}
+//
+// 	url := auth.AuthURL(state)
+// 	return c.SendString("<p>🎉 To connect to Spotify, follow the following link: " + url + "</p>")
+// }

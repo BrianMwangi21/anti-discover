@@ -32,7 +32,7 @@ func runServer() error {
 	server.Static("/static", "./static")
 
 	server.Get("/", indexViewHandler)
-	server.Get("/api/connect", connectToSpotifyHandler)
+	server.Get("/anti", antiHandler)
 
 	return server.Listen(fmt.Sprintf(":%d", port))
 }

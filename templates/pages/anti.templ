@@ -1,0 +1,17 @@
+package pages
+
+import (
+	"github.com/zmb3/spotify/v2"
+)
+
+templ AntiContent(user *spotify.PrivateUser) {
+	<div id="app">
+		<div>
+			<h1>Hi, { user.DisplayName }</h1>
+			<p>
+				Let's take a look at your library then get to cruching the data. <br />
+				Oh, and we wouldn't mind if you share Anti-Discover with your followers!
+			</p>
+		</div>
+	</div>
+}
