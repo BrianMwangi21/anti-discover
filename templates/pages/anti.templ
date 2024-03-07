@@ -4,14 +4,28 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-templ AntiContent(user *spotify.PrivateUser) {
+templ RecommendationContent(recommendation spotify.SimpleTrack) {
+	<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; background-color: white; border: 0.5px solid #EBEBEB; border-radius: 4px; align-items: baseline;">
+		<img src={ recommendation.Album.Images[0].URL } style="width: 100%; height: 320px; object-fit: cover" />
+		<p style="font-size: 16px;">{ recommendation.Name }</p>
+		<p style="font-size: 12px;">by { recommendation.Artists[0].Name }</p>
+	</div>
+}
+
+templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrack) {
 	<div id="app">
-		<div>
-			<h1>Hi, { user.DisplayName }</h1>
+		<div style="display: flex; flex-direction: column; gap: 32px">
+			<h1>Hi, { user.DisplayName } 👋</h1>
 			<p>
-				Let's take a look at your library then get to cruching the data. <br />
-				Oh, and we wouldn't mind if you share Anti-Discover with your followers!
+				After having a look at your top track (and you have good taste btw 👌), <br />
+				this is way off your radar. Proceed with caution!
 			</p>
+
+			<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
+				for _, recommendation := range recommendations  {
+					@RecommendationContent(recommendation)
+				}
+			</div>
 		</div>
 	</div>
 }

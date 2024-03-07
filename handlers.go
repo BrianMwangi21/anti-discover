@@ -86,8 +86,13 @@ func antiHandler(c *fiber.Ctx) error {
 		return err
 	}
 
+	recommendations, err := getMusicRecommendations(client)
+	if err != nil {
+		return err
+	}
+
 	metaTags := getMetaTags()
-	antiContent := pages.AntiContent(user)
+	antiContent := pages.AntiContent(user, recommendations)
 
 	templateHandler := templ.Handler(
 		templates.Layout("Anti-Discover", metaTags, antiContent),
@@ -95,12 +100,3 @@ func antiHandler(c *fiber.Ctx) error {
 
 	return adaptor.HTTPHandler(templateHandler)(c)
 }
-
-// func connectToSpotifyHandler(c *fiber.Ctx) error {
-// 	if c.Get("HX-Request") == "" || c.Get("HX-Request") != "true" {
-// 		return fiber.NewError(fiber.StatusBadRequest, "non-htmx request")
-// 	}
-//
-// 	url := auth.AuthURL(state)
-// 	return c.SendString("<p>🎉 To connect to Spotify, follow the following link: " + url + "</p>")
-// }

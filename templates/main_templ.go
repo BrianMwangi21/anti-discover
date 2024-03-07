@@ -25,7 +25,7 @@ func Layout(title string, metaTags, bodyContent templ.Component) templ.Component
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><meta http-equiv=\"Content-Security-Policy\" content=\"default-src &#39;self&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39; https://fonts.googleapis.com; font-src &#39;self&#39; data: https://fonts.gstatic.com; script-src &#39;self&#39; &#39;unsafe-inline&#39;; connect-src &#39;self&#39; ws://localhost:*; img-src &#39;self&#39; data:*;\"><meta name=\"theme-color\" content=\"#FEFEF5\"><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\"><meta http-equiv=\"Content-Security-Policy\" content=\"default-src &#39;self&#39;; style-src &#39;self&#39; &#39;unsafe-inline&#39; https://fonts.googleapis.com; font-src &#39;self&#39; data: https://fonts.gstatic.com; script-src &#39;self&#39; &#39;unsafe-inline&#39;; connect-src &#39;self&#39; ws://localhost:*; img-src &#39;self&#39; data: https://i.scdn.co;\"><meta name=\"theme-color\" content=\"#FEFEF5\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
