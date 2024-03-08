@@ -49,11 +49,11 @@ func getMetaTags() templ.Component {
 	)
 }
 
-func getMusicRecommendations(client *spotify.Client) ([]spotify.SimpleTrack, error) {
+func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) ([]spotify.SimpleTrack, *spotify.FullPlaylist, error) {
 	ctx := context.Background()
 	topTracks, err := client.CurrentUsersTopTracks(ctx)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	var trackIDs []spotify.ID
@@ -63,7 +63,7 @@ func getMusicRecommendations(client *spotify.Client) ([]spotify.SimpleTrack, err
 
 	audioFeatures, err := client.GetAudioFeatures(ctx, trackIDs...)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	seeds := spotify.Seeds{
@@ -73,10 +73,15 @@ func getMusicRecommendations(client *spotify.Client) ([]spotify.SimpleTrack, err
 
 	recommendations, err := client.GetRecommendations(ctx, seeds, trackAttributes)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return recommendations.Tracks, nil
+	playlist, err := createPlaylist(client, recommendations.Tracks, userID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return recommendations.Tracks, playlist, nil
 }
 
 func calculateAntiFeatures(features []*spotify.AudioFeatures) *spotify.TrackAttributes {
@@ -106,4 +111,25 @@ func calculateAntiFeatures(features []*spotify.AudioFeatures) *spotify.TrackAttr
 		TargetInstrumentalness(1 - instrumentalness/count).
 		TargetLiveness(1 - liveness/count).
 		TargetValence(1 - valence/count)
+}
+
+func createPlaylist(client *spotify.Client, recommendations []spotify.SimpleTrack, userID string) (*spotify.FullPlaylist, error) {
+	ctx := context.Background()
+
+	playlist, err := client.CreatePlaylistForUser(ctx, userID, "Anti-Discover", "Playlist created from Spotify's evil twin - Anti-Discover", true, false)
+	if err != nil {
+		return nil, err
+	}
+
+	var trackIDs []spotify.ID
+	for _, recommendation := range recommendations {
+		trackIDs = append(trackIDs, recommendation.ID)
+	}
+
+	_, err = client.AddTracksToPlaylist(ctx, playlist.ID, trackIDs...)
+	if err != nil {
+		return nil, err
+	}
+
+	return playlist, nil
 }

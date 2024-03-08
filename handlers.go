@@ -86,13 +86,13 @@ func antiHandler(c *fiber.Ctx) error {
 		return err
 	}
 
-	recommendations, err := getMusicRecommendations(client)
+	recommendations, playlist, err := getRecommendationAndCreatePlaylist(client, user.ID)
 	if err != nil {
 		return err
 	}
 
 	metaTags := getMetaTags()
-	antiContent := pages.AntiContent(user, recommendations)
+	antiContent := pages.AntiContent(user, recommendations, playlist)
 
 	templateHandler := templ.Handler(
 		templates.Layout("Anti-Discover", metaTags, antiContent),

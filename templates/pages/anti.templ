@@ -15,7 +15,7 @@ templ RecommendationContent(recommendation spotify.SimpleTrack) {
 	</div>
 }
 
-templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrack) {
+templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrack, playlist *spotify.FullPlaylist) {
 	<div id="app">
 		<div style="display: flex; flex-direction: column; gap: 32px">
 			<h1>Hi, { user.DisplayName } 👋</h1>
@@ -29,6 +29,10 @@ templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTra
 					@RecommendationContent(recommendation)
 				}
 			</div>
+
+			<p>
+				Oh, and we went ahead and created an <a href={ templ.SafeURL(playlist.ExternalURLs["spotify"]) } target="_blank">Anti-Discover</a> playlist for you!
+			</p>
 		</div>
 	</div>
 }
