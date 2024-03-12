@@ -8,11 +8,10 @@ import (
 	"github.com/BrianMwangi21/anti-discover.git/templates"
 	"github.com/BrianMwangi21/anti-discover.git/templates/pages"
 	"github.com/a-h/templ"
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	gowebly "github.com/gowebly/helpers"
 	"github.com/zmb3/spotify/v2"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 const redirectURI = "http://localhost:7000/anti"

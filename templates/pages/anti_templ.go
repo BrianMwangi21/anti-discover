@@ -35,14 +35,14 @@ func RecommendationContent(recommendation spotify.SimpleTrack) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" style=\"width: 100%; height: 320px; object-fit: cover\"><p style=\"font-size: 16px;\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" style=\"width: 100%; height: 320px; object-fit: cover\"><p style=\"font-size: 16px; text-align: left\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(recommendation.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/anti.templ`, Line: 9, Col: 51}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/anti.templ`, Line: 9, Col: 68}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

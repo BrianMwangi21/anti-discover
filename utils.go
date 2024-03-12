@@ -51,7 +51,8 @@ func getMetaTags() templ.Component {
 
 func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) ([]spotify.SimpleTrack, *spotify.FullPlaylist, error) {
 	ctx := context.Background()
-	topTracks, err := client.CurrentUsersTopTracks(ctx)
+	topTracks, err := client.CurrentUsersTopTracks(ctx, spotify.Timerange(spotify.LongTermRange), spotify.Limit(50))
+
 	if err != nil {
 		return nil, nil, err
 	}
@@ -66,8 +67,16 @@ func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) (
 		return nil, nil, err
 	}
 
+	seedTrackIds := []spotify.ID{
+		topTracks.Tracks[9].ID,
+		topTracks.Tracks[19].ID,
+		topTracks.Tracks[29].ID,
+		topTracks.Tracks[39].ID,
+		topTracks.Tracks[49].ID,
+	}
+
 	seeds := spotify.Seeds{
-		Tracks: []spotify.ID{topTracks.Tracks[0].ID},
+		Tracks: seedTrackIds,
 	}
 	trackAttributes := calculateAntiFeatures(audioFeatures)
 
