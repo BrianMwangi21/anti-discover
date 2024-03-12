@@ -39,15 +39,15 @@ templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTra
 				this is way off your radar. Proceed with caution!
 			</p>
 
+			<p>
+				Oh, and we went ahead and created an <a href={ templ.SafeURL(playlist.ExternalURLs["spotify"]) } target="_blank">Anti-Discover</a> playlist for you!
+			</p>
+			
 			<div class="responsive-container">
 				for _, recommendation := range recommendations  {
 					@RecommendationContent(recommendation)
 				}
 			</div>
-
-			<p>
-				Oh, and we went ahead and created an <a href={ templ.SafeURL(playlist.ExternalURLs["spotify"]) } target="_blank">Anti-Discover</a> playlist for you!
-			</p>
 		</div>
 	</div>
 }

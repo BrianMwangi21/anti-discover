@@ -107,7 +107,16 @@ func AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrac
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" 👋</h1><p>After having a look at your top track (and you have good taste btw 👌), <br>this is way off your radar. Proceed with caution!</p><div class=\"responsive-container\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" 👋</h1><p>After having a look at your top track (and you have good taste btw 👌), <br>this is way off your radar. Proceed with caution!</p><p>Oh, and we went ahead and created an <a href=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL(playlist.ExternalURLs["spotify"])
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" target=\"_blank\">Anti-Discover</a> playlist for you!</p><div class=\"responsive-container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -117,16 +126,7 @@ func AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrac
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><p>Oh, and we went ahead and created an <a href=\"")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		var templ_7745c5c3_Var7 templ.SafeURL = templ.SafeURL(playlist.ExternalURLs["spotify"])
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(string(templ_7745c5c3_Var7)))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" target=\"_blank\">Anti-Discover</a> playlist for you!</p></div></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

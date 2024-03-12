@@ -58,26 +58,24 @@ func getMetaTags() templ.Component {
 
 func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) ([]spotify.SimpleTrack, *spotify.FullPlaylist, error) {
 	ctx := context.Background()
-	topTracks, err := client.CurrentUsersTopTracks(ctx, spotify.Timerange(spotify.LongTermRange), spotify.Limit(50))
+	topTracks, err := client.CurrentUsersTopTracks(ctx, spotify.Timerange(spotify.ShortTermRange), spotify.Limit(10))
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	rand.NewSource(time.Now().UnixNano())
-
-	var seedTrackIds []spotify.ID
-	usedIndices := make(map[int]bool)
-	for len(seedTrackIds) < 5 {
-		index := rand.Intn(len(topTracks.Tracks))
-		if !usedIndices[index] {
-			seedTrackIds = append(seedTrackIds, topTracks.Tracks[index].ID)
-			usedIndices[index] = true
-		}
+	index1 := rand.Intn(len(topTracks.Tracks))
+	index2 := index1
+	for index2 == index1 {
+		index2 = rand.Intn(len(topTracks.Tracks))
 	}
 
 	seeds := spotify.Seeds{
-		Tracks: seedTrackIds,
+		Tracks: []spotify.ID{
+			topTracks.Tracks[index1].ID,
+			topTracks.Tracks[index2].ID,
+		},
 	}
 
 	var trackIDs []spotify.ID
@@ -92,7 +90,7 @@ func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) (
 
 	trackAttributes := calculateAntiFeatures(audioFeatures)
 
-	recommendations, err := client.GetRecommendations(ctx, seeds, trackAttributes, spotify.Limit(50))
+	recommendations, err := client.GetRecommendations(ctx, seeds, trackAttributes, spotify.Limit(20))
 	if err != nil {
 		return nil, nil, err
 	}
