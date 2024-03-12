@@ -125,6 +125,21 @@ func calculateAntiFeatures(features []*spotify.AudioFeatures) *spotify.TrackAttr
 func createPlaylist(client *spotify.Client, recommendations []spotify.SimpleTrack, userID string) (*spotify.FullPlaylist, error) {
 	ctx := context.Background()
 
+	playlists, err := client.GetPlaylistsForUser(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, playlist := range playlists.Playlists {
+		if playlist.Name == "Anti-Discover" {
+			err = client.UnfollowPlaylist(ctx, playlist.ID)
+			if err != nil {
+				return nil, err
+			}
+			break
+		}
+	}
+
 	playlist, err := client.CreatePlaylistForUser(ctx, userID, "Anti-Discover", "Playlist created from Spotify's evil twin - Anti-Discover", true, false)
 	if err != nil {
 		return nil, err
