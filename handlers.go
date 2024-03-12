@@ -14,8 +14,9 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-const redirectURI = "http://localhost:7000/anti"
 const state = "anti-discover"
+
+var redirectURI = gowebly.Getenv("REDIRECT_URI", "http://localhost:7000/anti")
 
 func getSpotifyLink() (templ.SafeURL, error) {
 	auth := getAuth()
