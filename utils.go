@@ -87,7 +87,7 @@ func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) (
 
 	trackAttributes := calculateAntiFeatures(audioFeatures)
 
-	recommendations, err := client.GetRecommendations(ctx, seeds, trackAttributes)
+	recommendations, err := client.GetRecommendations(ctx, seeds, trackAttributes, spotify.Limit(50))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -121,12 +121,22 @@ func calculateAntiFeatures(features []*spotify.AudioFeatures) *spotify.TrackAttr
 
 	count := float64(len(features))
 	return spotify.NewTrackAttributes().
-		TargetAcousticness(1 - acousticness/count).
-		TargetDanceability(1 - danceability/count).
-		TargetEnergy(1 - energy/count).
-		TargetInstrumentalness(1 - instrumentalness/count).
-		TargetLiveness(1 - liveness/count).
-		TargetValence(1 - valence/count)
+		TargetAcousticness(superSecretTakeItToExtremeAlgo(acousticness, count)).
+		TargetDanceability(superSecretTakeItToExtremeAlgo(danceability, count)).
+		TargetEnergy(superSecretTakeItToExtremeAlgo(energy, count)).
+		TargetInstrumentalness(superSecretTakeItToExtremeAlgo(instrumentalness, count)).
+		TargetLiveness(superSecretTakeItToExtremeAlgo(liveness, count)).
+		TargetValence(superSecretTakeItToExtremeAlgo(valence, count))
+}
+
+func superSecretTakeItToExtremeAlgo(feature, count float64) float64 {
+	target := 1 - feature/count
+
+	if target > 0.5 {
+		return 0.9
+	}
+
+	return 0.1
 }
 
 func createPlaylist(client *spotify.Client, recommendations []spotify.SimpleTrack, userID string) (*spotify.FullPlaylist, error) {
