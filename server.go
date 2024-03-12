@@ -14,7 +14,7 @@ import (
 )
 
 func runServer() error {
-	port, err := strconv.Atoi(gowebly.Getenv("BACKEND_PORT", "7000"))
+	port, err := strconv.Atoi(gowebly.Getenv("BACKEND_PORT", "8080"))
 	if err != nil {
 		return err
 	}
