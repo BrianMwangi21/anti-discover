@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
+	"math/rand"
 	"net/http"
+	"time"
 
 	"github.com/BrianMwangi21/anti-discover.git/templates/pages"
 	"github.com/a-h/templ"
@@ -57,6 +59,22 @@ func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) (
 		return nil, nil, err
 	}
 
+	rand.NewSource(time.Now().UnixNano())
+
+	var seedTrackIds []spotify.ID
+	usedIndices := make(map[int]bool)
+	for len(seedTrackIds) < 5 {
+		index := rand.Intn(len(topTracks.Tracks))
+		if !usedIndices[index] {
+			seedTrackIds = append(seedTrackIds, topTracks.Tracks[index].ID)
+			usedIndices[index] = true
+		}
+	}
+
+	seeds := spotify.Seeds{
+		Tracks: seedTrackIds,
+	}
+
 	var trackIDs []spotify.ID
 	for _, track := range topTracks.Tracks {
 		trackIDs = append(trackIDs, track.ID)
@@ -67,17 +85,6 @@ func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) (
 		return nil, nil, err
 	}
 
-	seedTrackIds := []spotify.ID{
-		topTracks.Tracks[9].ID,
-		topTracks.Tracks[19].ID,
-		topTracks.Tracks[29].ID,
-		topTracks.Tracks[39].ID,
-		topTracks.Tracks[49].ID,
-	}
-
-	seeds := spotify.Seeds{
-		Tracks: seedTrackIds,
-	}
 	trackAttributes := calculateAntiFeatures(audioFeatures)
 
 	recommendations, err := client.GetRecommendations(ctx, seeds, trackAttributes)
