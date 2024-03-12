@@ -8,8 +8,8 @@ templ RecommendationContent(recommendation spotify.SimpleTrack) {
 	<div style="display: flex; flex-direction: column; gap: 4px; padding: 12px; background-color: white; border: 0.5px solid #EBEBEB; border-radius: 4px; align-items: baseline;">
 		<img src={ recommendation.Album.Images[0].URL } style="width: 100%; height: 320px; object-fit: cover" />
 		<p style="font-size: 16px;">{ recommendation.Name }</p>
-		<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
-			<p style="font-size: 12px;">by { recommendation.Artists[0].Name }</p>
+		<div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%; align-items: end; gap: 6px">
+			<p style="font-size: 12px; text-align: left">by { recommendation.Artists[0].Name }</p>
 			<a href={ templ.SafeURL(recommendation.ExternalURLs["spotify"]) } target="_blank">Listen</a>
 		</div>
 	</div>

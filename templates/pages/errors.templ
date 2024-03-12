@@ -1,0 +1,19 @@
+package pages
+
+templ ErrorsContent(err string, link templ.SafeURL) {
+	<div id="app">
+		<div style="display: flex; flex-direction: column; gap: 32px">
+			<h1>Ooopsie 🤒</h1>
+			<p>
+			  We seem to have gotten an error in the process. <br />
+				<span style="color: red;">{ err }</span> <br />
+			</p>
+			<p>
+			  And since I might not know how to fix it, could you try again. Pretty please 🙏
+			</p>
+			<div class="content">
+				<a class="button" style="text-decoration: underline" href={ link }>Reconnect to Spotify</a>
+			</div>
+		</div>
+	</div>
+}

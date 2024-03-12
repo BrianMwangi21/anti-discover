@@ -67,28 +67,28 @@ func antiHandler(c *fiber.Ctx) error {
 
 	request, err := convertRequest(&c.Context().Request)
 	if err != nil {
-		return err
+		return errorHandler(c, err)
 	}
 
 	token, err := auth.Token(request.Context(), state, request)
 
 	if err != nil {
-		return err
+		return errorHandler(c, err)
 	}
 
 	if st := request.FormValue("state"); st != state {
-		return errors.New("State mismatch")
+		return errorHandler(c, errors.New("State mismatch"))
 	}
 
 	client := spotify.New(auth.Client(c.Context(), token))
 	user, err := client.CurrentUser(context.Background())
 	if err != nil {
-		return err
+		return errorHandler(c, err)
 	}
 
 	recommendations, playlist, err := getRecommendationAndCreatePlaylist(client, user.ID)
 	if err != nil {
-		return err
+		return errorHandler(c, err)
 	}
 
 	metaTags := getMetaTags()
@@ -96,6 +96,23 @@ func antiHandler(c *fiber.Ctx) error {
 
 	templateHandler := templ.Handler(
 		templates.Layout("Anti-Discover", metaTags, antiContent),
+	)
+
+	return adaptor.HTTPHandler(templateHandler)(c)
+}
+
+func errorHandler(c *fiber.Ctx, err error) error {
+	link, linkErr := getSpotifyLink()
+
+	if linkErr != nil {
+		err = linkErr
+	}
+
+	metaTags := getMetaTags()
+	errorsContent := pages.ErrorsContent(err.Error(), link)
+
+	templateHandler := templ.Handler(
+		templates.Layout("Anti-Discover", metaTags, errorsContent),
 	)
 
 	return adaptor.HTTPHandler(templateHandler)(c)

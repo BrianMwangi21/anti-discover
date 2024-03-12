@@ -7,7 +7,7 @@ templ MetaTags(keywords, description string) {
 
 templ BodyContent(title, description string, link templ.SafeURL) {
 	<div id="app">
-		<div>
+		<div style="display: flex; flex-direction: column; gap: 32px">
 			<h1>{ title }</h1>
 			<p>
 				{ description }
