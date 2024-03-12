@@ -9,6 +9,7 @@ import (
 
 	"github.com/BrianMwangi21/anti-discover.git/templates/pages"
 	"github.com/a-h/templ"
+	gowebly "github.com/gowebly/helpers"
 	"github.com/valyala/fasthttp"
 	"github.com/zmb3/spotify/v2"
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
@@ -41,6 +42,7 @@ func convertRequest(req *fasthttp.Request) (*http.Request, error) {
 }
 
 func getAuth() *spotifyauth.Authenticator {
+	redirectURI := gowebly.Getenv("REDIRECT_URI", "http://localhost:8080/anti")
 	return spotifyauth.New(spotifyauth.WithRedirectURL(redirectURI), spotifyauth.WithScopes(scopes[:]...))
 }
 
