@@ -94,20 +94,20 @@ func AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrac
 			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"app\"><div style=\"display: flex; flex-direction: column; gap: 32px\"><h1>Hi, ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div id=\"app\"><style>\n\t\t\t.responsive-container {\n        \tdisplay: flex;\n        \tflex-direction: column;\n        \tgap: 16px;\n    \t}\n\n    \t@media (min-width: 768px) {\n        \t.responsive-container {\n            \tdisplay: grid;\n            \tgrid-template-columns: repeat(4, minmax(0, 1fr));\n        \t}\n    \t}\n\t\t</style><div style=\"display: flex; flex-direction: column; gap: 32px\"><h1>Hi, ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(user.DisplayName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/anti.templ`, Line: 20, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/pages/anti.templ`, Line: 35, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" 👋</h1><p>After having a look at your top track (and you have good taste btw 👌), <br>this is way off your radar. Proceed with caution!</p><div style=\"display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(" 👋</h1><p>After having a look at your top track (and you have good taste btw 👌), <br>this is way off your radar. Proceed with caution!</p><div class=\"responsive-container\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

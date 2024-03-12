@@ -17,6 +17,21 @@ templ RecommendationContent(recommendation spotify.SimpleTrack) {
 
 templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTrack, playlist *spotify.FullPlaylist) {
 	<div id="app">
+		<style>
+			.responsive-container {
+        	display: flex;
+        	flex-direction: column;
+        	gap: 16px;
+    	}
+
+    	@media (min-width: 768px) {
+        	.responsive-container {
+            	display: grid;
+            	grid-template-columns: repeat(4, minmax(0, 1fr));
+        	}
+    	}
+		</style>
+		
 		<div style="display: flex; flex-direction: column; gap: 32px">
 			<h1>Hi, { user.DisplayName } 👋</h1>
 			<p>
@@ -24,7 +39,7 @@ templ AntiContent(user *spotify.PrivateUser, recommendations []spotify.SimpleTra
 				this is way off your radar. Proceed with caution!
 			</p>
 
-			<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px;">
+			<div class="responsive-container">
 				for _, recommendation := range recommendations  {
 					@RecommendationContent(recommendation)
 				}

@@ -42,7 +42,10 @@ func convertRequest(req *fasthttp.Request) (*http.Request, error) {
 }
 
 func getAuth() *spotifyauth.Authenticator {
-	redirectURI := gowebly.Getenv("REDIRECT_URI", "http://localhost:8080/anti")
+	redirectURI := gowebly.Getenv("REDIRECT_URI", "")
+	if redirectURI == "" {
+		redirectURI = "http://localhost:8080/anti"
+	}
 	return spotifyauth.New(spotifyauth.WithRedirectURL(redirectURI), spotifyauth.WithScopes(scopes[:]...))
 }
 
