@@ -3,41 +3,16 @@ package main
 import (
 	"context"
 	"errors"
-	"net/url"
 
 	"github.com/BrianMwangi21/anti-discover.git/templates"
 	"github.com/BrianMwangi21/anti-discover.git/templates/pages"
 	"github.com/a-h/templ"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
-	gowebly "github.com/gowebly/helpers"
 	"github.com/zmb3/spotify/v2"
 )
 
 const state = "anti-discover"
-
-func getSpotifyLink() (templ.SafeURL, error) {
-	auth := getAuth()
-
-	spotifyID := gowebly.Getenv("SPOTIFY_ID", "")
-	if spotifyID == "" {
-		return "", errors.New("SPOTIFY_ID not set")
-	}
-
-	authURL := auth.AuthURL(state)
-	parsedURL, err := url.Parse(authURL)
-
-	if err != nil {
-		return "", errors.New("Parsing error failed")
-	}
-
-	query := parsedURL.Query()
-	query.Set("client_id", spotifyID)
-	parsedURL.RawQuery = query.Encode()
-	updatedURL := parsedURL.String()
-
-	return templ.URL(updatedURL), nil
-}
 
 func indexViewHandler(c *fiber.Ctx) error {
 	link, err := getSpotifyLink()
@@ -68,10 +43,17 @@ func antiHandler(c *fiber.Ctx) error {
 		return errorHandler(c, err)
 	}
 
-	token, err := auth.Token(request.Context(), state, request)
-
+	token, err := retrieveToken(request)
 	if err != nil {
-		return errorHandler(c, err)
+		token, err = auth.Token(request.Context(), state, request)
+		if err != nil {
+			return errorHandler(c, err)
+		}
+
+		err = saveToken(request, token)
+		if err != nil {
+			return errorHandler(c, err)
+		}
 	}
 
 	if st := request.FormValue("state"); st != state {

@@ -3,8 +3,11 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/BrianMwangi21/anti-discover.git/templates/pages"
@@ -13,6 +16,7 @@ import (
 	"github.com/valyala/fasthttp"
 	"github.com/zmb3/spotify/v2"
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
+	"golang.org/x/oauth2"
 )
 
 var (
@@ -54,6 +58,68 @@ func getMetaTags() templ.Component {
 		"Anti-Discover",
 		"Spotify's discover weekly rogue twin",
 	)
+}
+
+func saveToken(request *http.Request, token *oauth2.Token) error {
+	ctx := context.Background()
+	values := request.URL.Query()
+	code := values.Get("code")
+
+	tokenData, err := json.Marshal(token)
+	if err != nil {
+		return errors.New("Error marshalling struct to JSON")
+	}
+
+	tokenString := string(tokenData)
+
+	err = redisClient.Set(ctx, code, tokenString, time.Hour).Err()
+	if err != nil {
+		return errors.New("Error saving token to Redis")
+	}
+
+	return nil
+}
+
+func retrieveToken(request *http.Request) (*oauth2.Token, error) {
+	ctx := context.Background()
+	values := request.URL.Query()
+	code := values.Get("code")
+
+	val, err := redisClient.Get(ctx, code).Result()
+	if err != nil {
+		return nil, errors.New("Error getting token from Redis")
+	}
+
+	var token oauth2.Token
+	err = json.Unmarshal([]byte(val), &token)
+	if err != nil {
+		return nil, errors.New("Error unmarshalling to struct")
+	}
+
+	return &token, nil
+}
+
+func getSpotifyLink() (templ.SafeURL, error) {
+	auth := getAuth()
+
+	spotifyID := gowebly.Getenv("SPOTIFY_ID", "")
+	if spotifyID == "" {
+		return "", errors.New("SPOTIFY_ID not set")
+	}
+
+	authURL := auth.AuthURL(state)
+	parsedURL, err := url.Parse(authURL)
+
+	if err != nil {
+		return "", errors.New("Parsing error failed")
+	}
+
+	query := parsedURL.Query()
+	query.Set("client_id", spotifyID)
+	parsedURL.RawQuery = query.Encode()
+	updatedURL := parsedURL.String()
+
+	return templ.URL(updatedURL), nil
 }
 
 func getRecommendationAndCreatePlaylist(client *spotify.Client, userID string) ([]spotify.SimpleTrack, *spotify.FullPlaylist, error) {
