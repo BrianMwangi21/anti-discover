@@ -20,17 +20,15 @@ func init() {
 
 	ctx := context.Background()
 
-	redisHost := gowebly.Getenv("REDIS_URI", "")
-	if redisHost == "" {
-		redisHost = "localhost:6379"
+	redisHost := gowebly.Getenv("REDIS_URL", "")
+	opts, err := redis.ParseURL(redisHost)
+	if err != nil {
+		slog.Error("Error parsing URL to redis: %v", err)
+		os.Exit(1)
 	}
 
-	redisClient = redis.NewClient(&redis.Options{
-		Addr:     redisHost,
-		Password: "",
-		DB:       0,
-	})
-	_, err := redisClient.Ping(ctx).Result()
+	redisClient = redis.NewClient(opts)
+	_, err = redisClient.Ping(ctx).Result()
 	if err != nil {
 		slog.Error("Error trying to ping redis: %v", err)
 		os.Exit(1)
